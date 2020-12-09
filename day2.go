@@ -37,18 +37,18 @@ func main() {
 			}
 			log.Fatal("Unexpected number of groups in regex split.")
 		}
-		min, err := strconv.Atoi(groups[1])
+		firstNum, err := strconv.Atoi(groups[1])
 		if err != nil {
 			log.Fatal(err)
 		}
-		max, err := strconv.Atoi(groups[2])
+		secondNum, err := strconv.Atoi(groups[2])
 		if err != nil {
 			log.Fatal(err)
 		}
 		char := groups[3]
 		passwd := groups[4]
 
-		if IsValidPassword(passwd, char, min, max) == true {
+		if IsValidPassword_2(passwd, char, firstNum, secondNum) == true {
 			count += 1
 		}
     }
@@ -60,7 +60,15 @@ func main() {
 	fmt.Printf("Number of valid passwords: %d\n", count)
 }
 
-func IsValidPassword(passwd string, char string, min int, max int) bool {
+func IsValidPassword_1(passwd string, char string, min int, max int) bool {
 	occurs := strings.Count(passwd, char)
 	return (occurs >= min && occurs <= max)
+}
+
+func IsValidPassword_2(passwd string, char string, index1 int, index2 int) bool {
+	if index1 < 1 || index1 > len(passwd) || index2 < 0 || index2 > len(passwd) {
+		log.Fatal("Invalid index values. Password %s has length %d, but specified indices (1-based) were %d and %d\n", passwd, len(passwd), index1, index2)
+	}
+
+	return (passwd[index1 - 1] == char[0]) != (passwd[index2 - 1] == char[0])
 }
