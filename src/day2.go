@@ -1,24 +1,24 @@
 package main
 
 import (
-    "bufio"
-    "fmt"
-    "log"
+	"bufio"
+	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func main() {
-    if len(os.Args) < 2 {
-        fmt.Println("Usage: go run day2.go [inputFile]")
-        return
+func solveDay2() {
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go run day2.go [inputFile]")
+		return
 	}
 
-    file, err := os.Open(os.Args[1])
-    if err != nil {
-        log.Fatal(err)
+	file, err := os.Open(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
 	}
 	defer file.Close()
 
@@ -26,7 +26,7 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	delim := "([0-9]+)-([0-9]+)[ ]*([A-Za-z]):[ ]*(.*)"
 	re := regexp.MustCompile(delim)
-    for scanner.Scan() {
+	for scanner.Scan() {
 		line := scanner.Text()
 		groups := re.FindStringSubmatch(line)
 		if len(groups) != 5 {
@@ -51,10 +51,10 @@ func main() {
 		if IsValidPassword_2(passwd, char, firstNum, secondNum) == true {
 			count += 1
 		}
-    }
+	}
 
-    if err := scanner.Err(); err != nil {
-        log.Fatal(err)
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
 	}
 
 	fmt.Printf("Number of valid passwords: %d\n", count)
@@ -70,5 +70,5 @@ func IsValidPassword_2(passwd string, char string, index1 int, index2 int) bool 
 		log.Fatal("Invalid index values. Password %s has length %d, but specified indices (1-based) were %d and %d\n", passwd, len(passwd), index1, index2)
 	}
 
-	return (passwd[index1 - 1] == char[0]) != (passwd[index2 - 1] == char[0])
+	return (passwd[index1-1] == char[0]) != (passwd[index2-1] == char[0])
 }
