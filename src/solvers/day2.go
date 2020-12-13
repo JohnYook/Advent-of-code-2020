@@ -1,4 +1,4 @@
-package main
+package solvers
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func solveDay2() {
+func SolveDay2() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: go run day2.go [inputFile]")
 		return

@@ -1,4 +1,4 @@
-package main
+package solvers
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func main() {
+func SolveDay3() {
 	lines, err := helpers.ReadInputFile()
 
 	if err != nil {
