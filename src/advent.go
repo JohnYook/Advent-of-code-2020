@@ -6,5 +6,5 @@ import (
 
 // To run on windows machine w virus protection, set GOTMPDIR and add it to antivirus exceptions list
 func main() {
-	solvers.SolveDay4()
+	solvers.SolveDay5()
 }

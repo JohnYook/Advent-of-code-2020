@@ -21,11 +21,11 @@ func SolveDay4() {
 		return
 	}
 
-	//part_1(lines)
-	part_2(lines)
+	//countValidPassports_1(lines)
+	countValidPassports_2(lines)
 }
 
-func part_1(lines []string) {
+func countValidPassports_1(lines []string) {
 	count := len(lines)
 
 	validCount := 0
@@ -85,7 +85,7 @@ func readIntoPassport(passport map[string]string, line string) {
 	}
 }
 
-func part_2(lines []string) {
+func countValidPassports_2(lines []string) {
 	count := len(lines)
 
 	validCount := 0

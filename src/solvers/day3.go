@@ -38,17 +38,17 @@ func SolveDay3() {
 		}
 	}
 
-	//solve_1(terrainMap, count, lineLen)
-	solve_2(terrainMap, count, lineLen)
+	//getTreeCount_1(terrainMap, count, lineLen)
+	getTreeCount_2(terrainMap, count, lineLen)
 }
 
 // go 3 right down 1
-func solve_1(terrainMap [][]string, rowCount int, lineLen int) {
+func getTreeCount_1(terrainMap [][]string, rowCount int, lineLen int) {
 	solution1 := countTrees(terrainMap, rowCount, lineLen, 1, 3)
 	fmt.Printf("Tree count part 1: %d\n", solution1)
 }
 
-func solve_2(terrainMap [][]string, rowCount int, lineLen int) {
+func getTreeCount_2(terrainMap [][]string, rowCount int, lineLen int) {
 	// Right 1, down 1.
 	// Right 3, down 1.
 	// Right 5, down 1.
