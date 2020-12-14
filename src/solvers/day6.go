@@ -14,7 +14,7 @@ func SolveDay6() {
 		return
 	}
 
-	countAnswers_1(lines)
+	countAnswers_2(lines)
 }
 
 func countAnswers_1(lines []string) {
@@ -46,5 +46,42 @@ func addPersonAnswers(groupAnswers *helpers.Set, line string) {
 		if groupAnswers.Contains(char) == false {
 			groupAnswers.Add(char)
 		}
+	}
+}
+
+func countAnswers_2(lines []string) {
+	answerCount := 0
+	currentGroup := helpers.NewSet()
+	startOfGroup := true
+	for _, line := range lines {
+		if line == "" {
+			answerCount += countGroupAnswers(currentGroup)
+			currentGroup = helpers.NewSet()
+			startOfGroup = true
+		} else {
+			incorporpatePersonAnswers(currentGroup, line, startOfGroup)
+			startOfGroup = false
+		}
+	}
+
+	if currentGroup.Size() != 0 {
+		answerCount += countGroupAnswers(currentGroup)
+	}
+
+	fmt.Printf("Total answers counted: %d\n", answerCount)
+}
+
+func incorporpatePersonAnswers(groupAnswers *helpers.Set, line string, startOfGroup bool) {
+	currentPerson := helpers.NewSet()
+
+	for _, r := range line {
+		char := string(r)
+		currentPerson.Add(char)
+	}
+
+	if startOfGroup {
+		groupAnswers.Append(currentPerson)
+	} else {
+		groupAnswers.Replace(groupAnswers.Intersection(currentPerson))
 	}
 }

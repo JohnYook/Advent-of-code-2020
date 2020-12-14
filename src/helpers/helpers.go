@@ -40,19 +40,47 @@ func NewSet() *Set {
 	return s
 }
 
-func (s *Set) Add(value string) {
-	s.m[value] = exists
+func (s *Set) Add(key string) {
+	s.m[key] = exists
 }
 
-func (s *Set) Remove(value string) {
-	delete(s.m, value)
+func (s *Set) Remove(key string) {
+	delete(s.m, key)
 }
 
-func (s *Set) Contains(value string) bool {
-	_, c := s.m[value]
-	return c
+func (s *Set) Contains(key string) bool {
+	_, ok := s.m[key]
+	return ok
 }
 
 func (s *Set) Size() int {
 	return len(s.m)
+}
+
+func (s *Set) Append(o *Set) {
+	for key, _ := range o.m {
+		s.Add(key)
+	}
+}
+
+func (s *Set) Replace(o *Set) {
+	for key, _ := range s.m {
+		delete(s.m, key)
+	}
+
+	for key, _ := range o.m {
+		s.Add(key)
+	}
+}
+
+func (s *Set) Intersection(o *Set) *Set {
+	i := NewSet()
+	for key, _ := range s.m {
+		_, ok := o.m[key]
+		if ok == true {
+			i.Add(key)
+		}
+	}
+
+	return i
 }
