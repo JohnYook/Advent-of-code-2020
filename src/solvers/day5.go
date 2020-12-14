@@ -17,7 +17,7 @@ func SolveDay5() {
 		return
 	}
 
-	getSeatId_1(lines)
+	getSeatId_2(lines)
 }
 
 func getSeatId_1(lines []string) {
@@ -96,4 +96,44 @@ func computeSeat(seatCode string) int {
 	}
 
 	return seat
+}
+
+func getSeatId_2(lines []string) int {
+	var seatIds []int
+	for i := 0; i < len(lines); i++ {
+		line := lines[i]
+		if validateLine(line) == false {
+			fmt.Printf("Error. Line fails validation: %s\n", line)
+			continue
+		}
+
+		seatId := getSeatId(line)
+		seatIds = append(seatIds, seatId)
+	}
+
+	sort.Ints(seatIds)
+
+	for i := 1; i < len(seatIds); i++ {
+		nextSeatId := getNextSeatId(seatIds[i-1])
+		if seatIds[i] != nextSeatId {
+			fmt.Printf("Missing seatId is: %d\n", nextSeatId)
+			return nextSeatId
+		}
+	}
+
+	return -1
+}
+
+func getNextSeatId(seatId int) int {
+	currentRow := seatId / 8
+	currentSeat := seatId % 8
+
+	nextRow := currentRow
+	nextSeat := currentSeat + 1
+	if nextSeat == 8 {
+		nextSeat = 0
+		nextRow += 1
+	}
+
+	return nextRow*8 + nextSeat
 }
