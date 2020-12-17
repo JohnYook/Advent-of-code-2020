@@ -17,10 +17,10 @@ func SolveDay7() {
 		return
 	}
 
-	countBags_1(lines)
+	countBags(lines)
 }
 
-func countBags_1(lines []string) {
+func countBags(lines []string) {
 	bagRules := make(map[string]map[string]int)
 	containedByLUT := make(map[string]*helpers.Set)
 
@@ -85,11 +85,18 @@ func countBags_1(lines []string) {
 		return listOfBags.Size()
 	}
 
+	countNumberOfBagsContainedIn := func(bag string) int {
+		countOfBags := countBagsContainedIn(bagRules, bag)
+
+		return countOfBags
+	}
+
 	for _, line := range lines {
 		parseLine(line)
 	}
 
 	fmt.Printf("Number of bags that can contain a shiny gold bag: %d\n", countNumberOfBagsThatContain("shiny gold"))
+	fmt.Printf("Number of bags contained in a shiny gold bag: %d\n", countNumberOfBagsContainedIn("shiny gold"))
 }
 
 func addBagsThatContainToList(listOfBags *helpers.Set, lookup map[string]*helpers.Set, bagColor string) {
@@ -101,4 +108,16 @@ func addBagsThatContainToList(listOfBags *helpers.Set, lookup map[string]*helper
 			addBagsThatContainToList(listOfBags, lookup, key)
 		}
 	}
+}
+
+func countBagsContainedIn(lookup map[string]map[string]int, bagColor string) int {
+	nestedBagsCount := 0
+	if containedBags, ok := lookup[bagColor]; ok && len(containedBags) > 0 {
+		for key, value := range containedBags {
+			// e.g. if [brown: 3], then it's 3 brown bags + 3 * what each brown bag contains
+			nestedBagsCount += value + value*countBagsContainedIn(lookup, key)
+		}
+	}
+
+	return nestedBagsCount
 }
