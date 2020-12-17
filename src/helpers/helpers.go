@@ -73,6 +73,15 @@ func (s *Set) Replace(o *Set) {
 	}
 }
 
+func (s *Set) Items() []string {
+	keys := make([]string, 0, len(s.m))
+
+	for k, _ := range s.m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 func (s *Set) Intersection(o *Set) *Set {
 	i := NewSet()
 	for key, _ := range s.m {
