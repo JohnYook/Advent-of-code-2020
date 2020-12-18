@@ -73,6 +73,12 @@ func (s *Set) Replace(o *Set) {
 	}
 }
 
+func (s *Set) Copy(o *Set) {
+	for key, _ := range o.m {
+		s.Add(key)
+	}
+}
+
 func (s *Set) Items() []string {
 	keys := make([]string, 0, len(s.m))
 
