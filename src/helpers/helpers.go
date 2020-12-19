@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 )
 
 func ReadInputFile() ([]string, error) {
@@ -26,6 +27,18 @@ func ReadInputFile() ([]string, error) {
 		lines = append(lines, scanner.Text())
 	}
 	return lines, scanner.Err()
+}
+
+func ConvertToInts(lines []string) []int {
+	var nums []int
+	for _, line := range lines {
+		intVal, err := strconv.Atoi(line)
+		if err != nil {
+			panic(fmt.Sprintf("ConvertToInts encountered a number it could not convert: %s\n", line))
+		}
+		nums = append(nums, intVal)
+	}
+	return nums
 }
 
 type Set struct {
