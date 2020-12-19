@@ -3,7 +3,11 @@ package solvers
 import (
 	"fmt"
 	"helpers"
+	"sort"
 )
+
+var _XMASdata []int
+var _dataLen int
 
 func SolveDay9() {
 	lines, err := helpers.ReadInputFile()
@@ -14,9 +18,21 @@ func SolveDay9() {
 		return
 	}
 
-	nums := helpers.ConvertToInts(lines)
+	_XMASdata = helpers.ConvertToInts(lines)
+	_dataLen = len(_XMASdata)
 
-	findFirstInvalidXMASCode(nums)
+	if _dataLen < 26 {
+		fmt.Printf("Input too short for XMAS code. Only %d numbers.\n", _dataLen)
+		return
+	}
+
+	invalidNumber := findFirstInvalidXMASCode()
+
+	if invalidNumber != -1 {
+		findEncryptionWeakness(invalidNumber)
+	} else {
+		fmt.Println("Unable to find invalid XMAS code. Skipping encryption weakness search.")
+	}
 }
 
 func isValidXMAScode(num int, preceding []int) bool {
@@ -51,18 +67,45 @@ func isValidXMAScode(num int, preceding []int) bool {
 	return false
 }
 
-func findFirstInvalidXMASCode(nums []int) {
-	inputLen := len(nums)
-	if inputLen < 26 {
-		fmt.Printf("Input too short for XMAS code. Only %d numbers.\n", inputLen)
-		return
-	}
-
-	for i := 25; i < inputLen; i++ {
-		if !isValidXMAScode(nums[i], nums[i-25:i]) {
-			fmt.Printf("Found an invalid XMAS code: %d.\n", nums[i])
-			return
+func findFirstInvalidXMASCode() int {
+	for i := 25; i < _dataLen; i++ {
+		if !isValidXMAScode(_XMASdata[i], _XMASdata[i-25:i]) {
+			fmt.Printf("Found an invalid XMAS code: %d.\n", _XMASdata[i])
+			return _XMASdata[i]
 		}
 	}
 	fmt.Println("All numbers in input seem to be valid XMAS codes.")
+	return -1
+}
+
+func findEncryptionWeakness(target int) {
+	for i := 0; i < _dataLen; i++ {
+		if start, end, found := findContiguousSetThatSumsToTarget(target, i); found {
+			fmt.Printf("Found contiguous set that sums to target %d. Start index: %d End index: %d\n", target, start, end)
+			//fmt.Printf("%v\n", _XMASdata[start:end+1])
+			smallest, largest := findSmallestAndLargestInSet(_XMASdata[start : end+1])
+			fmt.Printf("Smallest number: %d Largest number: %d Encryption weakness: %d\n", smallest, largest, smallest+largest)
+		}
+	}
+}
+
+func findContiguousSetThatSumsToTarget(target int, start int) (startIndex int, endingIndex int, found bool) {
+	runningSum := _XMASdata[start]
+	for i := start + 1; i < _dataLen; i++ {
+		runningSum += _XMASdata[i]
+		if runningSum == target {
+			return start, i, true
+		} else if runningSum > target {
+			return -1, -1, false
+		}
+	}
+	return -1, -1, false
+}
+
+func findSmallestAndLargestInSet(nums []int) (smallest int, largest int) {
+	numLen := len(nums)
+	_nums := make([]int, numLen)
+	copy(_nums, nums)
+	sort.Ints(_nums)
+	return _nums[0], _nums[numLen-1]
 }
