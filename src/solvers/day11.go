@@ -19,32 +19,48 @@ func SolveDay11() {
 
 	_ydim = len(lines)
 	_xdim = len(lines[0])
-	seatMap := make([][]byte, _ydim)
+	initialMap := make([][]byte, _ydim)
 	for i, line := range lines {
-		seatMap[i] = make([]byte, _xdim)
+		initialMap[i] = make([]byte, _xdim)
 		for j, char := range line {
-			seatMap[i][j] = byte(char)
+			initialMap[i][j] = byte(char)
 		}
 	}
 
-	findStableSeatArrangement(seatMap)
+	seatMap := findStableSeatArrangement(initialMap)
 	fmt.Printf("Number of occupied seats: %d\n", countOccupiedSeats(seatMap))
+	seatMapPart2 := findStableSeatArrangementPart2(initialMap)
+	fmt.Printf("Number of occupied seats for part 2: %d\n", countOccupiedSeats(seatMapPart2))
 }
 
-func findStableSeatArrangement(startingMap [][]byte) {
+func findStableSeatArrangement(startingMap [][]byte) [][]byte{
+	currentMap := copyMap(startingMap)
 	iterations := 0
 	for {
 		iterations += 1
-		changes := seatPeople(startingMap)
+		changes := seatPeople(currentMap)
 		if changes == false {
 			fmt.Printf("Map unchanged at iteration #%d\n", iterations)
-			return
+			return currentMap
 		}
 		if iterations > 100 {
 			fmt.Printf("Unable to reach stable state after %d iterations. Exiting....\n", iterations)
-			return
+			return currentMap
 		}
 	}
+}
+
+func copyMap(src [][]byte) [][]byte {
+	srcYLen := len(src)
+	newMap := make([][]byte, srcYLen)
+	for i := 0; i < srcYLen; i++ {
+		srcXLen := len(src[i])
+		newMap[i] = make([]byte, srcXLen)
+		for j := 0; j < srcXLen; j++ {
+			newMap[i][j] = src[i][j]
+		}
+	}
+	return newMap
 }
 
 func seatPeople(startingMap [][]byte) bool {
@@ -143,4 +159,86 @@ func overwriteMap(dest [][]byte, src [][]byte) {
 			dest[i][j] = src[i][j]
 		}
 	}
+}
+
+func findStableSeatArrangementPart2(startingMap [][]byte) [][]byte{
+	currentMap := copyMap(startingMap)
+	iterations := 0
+	for {
+		iterations += 1
+		changes := seatPeoplePart2(currentMap)
+		if changes == false {
+			fmt.Printf("Part 2: map unchanged at iteration #%d\n", iterations)
+			return currentMap
+		}
+		if iterations > 100 {
+			fmt.Printf("Part 2: Unable to reach stable state after %d iterations. Exiting....\n", iterations)
+			return currentMap
+		}
+	}
+}
+
+func seatPeoplePart2(startingMap [][]byte) bool {
+	newMap := make([][]byte, _ydim)
+	for i := 0; i < _ydim; i++ {
+		newMap[i] = make([]byte, _xdim)
+		for j := 0; j < _xdim; j++ {
+			if isFloor(startingMap, i, j) {
+				newMap[i][j] = startingMap[i][j]
+				continue
+			}
+			isOccupied := isOccupied(startingMap, i, j)
+			occupiedSeatsIn8dirs := occupiedSeatsIn8dirs(startingMap, i, j)
+			if !isOccupied && occupiedSeatsIn8dirs == 0 {
+				newMap[i][j] = byte('#')
+			} else if isOccupied && occupiedSeatsIn8dirs >= 5 {
+				newMap[i][j] = byte('L')
+			} else {
+				newMap[i][j] = startingMap[i][j]
+			}
+		}
+	}
+
+	if mapChanged(startingMap, newMap) {
+		overwriteMap(startingMap, newMap)
+		return true
+	}
+	return false
+}
+
+func occupiedSeatsIn8dirs(seatMap [][]byte, y int, x int) int {
+	occupiedSeats := 0
+	for rise := -1; rise < 2; rise++ {
+		for run := -1; run < 2; run++ {
+			if rise == 0 && run == 0 {
+				continue
+			}
+			if seeOccupiedSeatInDirection(seatMap, y, x, rise, run) {
+				occupiedSeats += 1
+			}
+		}
+	}
+	return occupiedSeats
+}
+
+func seeOccupiedSeatInDirection(seatMap [][]byte, ypos int, xpos int, ystep int, xstep int) bool {
+	currentY := ypos
+	currentX := xpos
+	for {
+		currentY += ystep
+		currentX += xstep
+		if inBounds(currentY, currentX) {
+			if isFloor(seatMap, currentY, currentX) {
+				continue
+ 			} else {
+ 				return isOccupied(seatMap, currentY, currentX)
+			}
+		} else {
+			return false
+		}
+	}
+}
+
+func inBounds(y int, x int) bool {
+	return y >= 0 &&  y < _ydim && x >= 0 && x < _xdim
 }
