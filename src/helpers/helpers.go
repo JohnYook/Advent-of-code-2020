@@ -112,3 +112,10 @@ func (s *Set) Intersection(o *Set) *Set {
 
 	return i
 }
+
+func Abs(num int) int {
+	if num  < 0 {
+		num = -num
+	}
+	return num
+}
