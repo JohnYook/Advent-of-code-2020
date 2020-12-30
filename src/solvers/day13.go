@@ -18,6 +18,7 @@ func SolveDay13() {
 	}
 
 	findEarliestBus(lines)
+	findTimeAllBusesLeaveInOrder(lines)
 }
 
 func findEarliestBus(lines []string) {
@@ -52,11 +53,69 @@ func getBusIds(line string) []int {
 		}
 		busId, ok := strconv.Atoi(idTok)
 		if ok != nil {
-			panic(fmt.Sprintf("Error converting bus lin %s to int.\n", idTok))
+			panic(fmt.Sprintf("Error converting bus line %s to int.\n", idTok))
 		}
 		busIds = append(busIds, busId)
 	}
 
 	sort.Ints(busIds)
 	return busIds
+}
+
+func findTimeAllBusesLeaveInOrder(lines []string) {
+	busIds := getOrderedBusIds(lines[1])
+
+	timestamp := getTimeBusesDepartInOrder(busIds)
+
+	fmt.Printf("Solution part 2: %d\n", timestamp)
+}
+
+func getOrderedBusIds(line string) []int {
+	idToks := strings.Split(line, ",")
+
+	var busIds []int
+	for _, idTok := range idToks {
+		if idTok == "x" {
+			busIds = append(busIds, 0)
+			continue
+		}
+		busId, ok := strconv.Atoi(idTok)
+		if ok != nil {
+			panic(fmt.Sprintf("Error converting bus line %s to int.\n", idTok))
+		}
+		busIds = append(busIds, busId)
+	}
+
+	return busIds
+}
+
+func getTimeBusesDepartInOrder(buses []int) int {
+	largestBus := helpers.Max(buses)
+	largestBusIndex := 0
+	for i, bus := range buses {
+		if bus == largestBus {
+			largestBusIndex = i
+			break
+		}
+	}
+
+	candidate := largestBus
+	for {
+		found := true
+		for i, bus := range buses {
+			if bus == 0 {
+				continue
+			}
+			if (candidate - largestBusIndex + i) % bus != 0 {
+				found = false
+				break
+			}
+		}
+		if found == false {
+			candidate += largestBus
+		} else {
+			break
+		}
+	}
+	return candidate - largestBusIndex
 }

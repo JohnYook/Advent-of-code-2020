@@ -119,3 +119,17 @@ func Abs(num int) int {
 	}
 	return num
 }
+
+func Max(nums []int) int {
+	if len(nums) <= 0{
+		panic(fmt.Sprintf("Invalid input to Max. Must be non-empty slice of ints.\n"))
+	}
+	max := nums[0]
+
+	for _, num := range nums {
+		if num > max {
+			max = num
+		}
+	}
+	return max
+}
